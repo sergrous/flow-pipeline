@@ -7,8 +7,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	fmpb "github.com/cloudflare/flow-pipeline/pb-ext"
 	proto "github.com/golang/protobuf/proto"
-	sarama "gopkg.in/Shopify/sarama.v1"
 	geoip2 "github.com/oschwald/geoip2-golang"
+	sarama "gopkg.in/Shopify/sarama.v1"
 	"net"
 	"strconv"
 	"strings"
@@ -110,11 +110,10 @@ func main() {
 	if *GeoIPdb != "" {
 		db, err = geoip2.Open(*GeoIPdb)
 		if err != nil {
-				log.Fatal(err)
+			log.Fatal(err)
 		}
 		defer db.Close()
 	}
-
 
 	messages := make(chan *sarama.ConsumerMessage, 15)
 	wg := &sync.WaitGroup{}
@@ -158,7 +157,7 @@ func main() {
 				flowmsg.DstCountry = dstcountry.Country.IsoCode
 			}
 			b, _ := proto.Marshal(flowmsg)
-			kafkaProducer.Input() <-&sarama.ProducerMessage{
+			kafkaProducer.Input() <- &sarama.ProducerMessage{
 				Topic: *KafkaOutTopic,
 				Value: sarama.ByteEncoder(b),
 			}
